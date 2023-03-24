@@ -3,13 +3,35 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import axios from "axios";
 import { Store } from "../Store";
-import { useContext } from "react";
+import { useContext} from "react";
+//import { useNavigate } from "react-router-dom";
 import "../App.css";
 
 export default function HomeScreen() {
   const { state } = useContext(Store);
   const { userInfo } = state;
+  //const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const priceId = e.target[0].value
+      const data = await axios.post("/create-checkout-session", {  
+        priceId
+      });
+
+      if (data) {
+        //console.log(data.data)
+        window.location = data.data
+      }
+      
+     //console.log()
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div>
@@ -20,17 +42,32 @@ export default function HomeScreen() {
           color: "white",
         }}
       >
-        <Navbar style={{ position: "absolute", width: "100%", zIndex: "1" }}>
+        <Navbar
+          bg="dark"
+          variant="dark"
+          style={{
+            position: "absolute",
+            width: "100%",
+            zIndex: "1",
+            height: "70px",
+          }}
+        >
           <Container className="d-flex justify-content-end">
             <div>
               {userInfo ? (
-                <Nav className="me-auto">
-                  <Nav.Link href="/profile">Profile</Nav.Link>
+                <Nav className="me-auto ">
+                  <Nav.Link href="/profile">
+                    <p className="nav-text">Profile</p>
+                  </Nav.Link>
                 </Nav>
               ) : (
                 <Nav className="me-auto">
-                  <Nav.Link href="/signup">Signup</Nav.Link>
-                  <Nav.Link href="/signin">Signin</Nav.Link>
+                  <Nav.Link href="/signup">
+                    <p className="nav-text">Signup</p>
+                  </Nav.Link>
+                  <Nav.Link href="/signin">
+                    <p className="nav-text">Signin</p>
+                  </Nav.Link>
                 </Nav>
               )}
             </div>
@@ -62,31 +99,38 @@ export default function HomeScreen() {
           <p>Upgrade to Premium & Get more Services!</p>
         </div>
         <div className=" d-flex align-items-center justify-content-center">
-          <Card className="ms-3 me-3 shadow" style={{ width: "18rem" }}>
-            <Card.Body>
-              <div className="d-flex justify-content-between border-bottom">
-                <div className="mb-3 mt-3">
-                  <Card.Title>StartUp</Card.Title>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="hidden"
+              name="priceId"
+              value="price_1Mp2jqK7StTt0Prs0jfLd0R5"
+            />
+            <Card className="ms-3 me-3 shadow" style={{ width: "18rem" }}>
+              <Card.Body>
+                <div className="d-flex justify-content-between border-bottom">
+                  <div className="mb-3 mt-3">
+                    <Card.Title>StartUp</Card.Title>
+                  </div>
+                  <div className="mb-3 mt-3">
+                    <Card.Title>$100/m</Card.Title>
+                  </div>
                 </div>
-                <div className="mb-3 mt-3">
-                  <Card.Title>$100/m</Card.Title>
+                <div>
+                  <ul className="mt-3" style={{ lineHeight: "250%" }}>
+                    <li>Kill Weed Spray</li>
+                    <li>Trimming / Bush Trim</li>
+                    <li>Edging</li>
+                    <li>Maintaining Yard</li>
+                    <li>Grass Lining</li>
+                    <li>2-3 times a Month</li>
+                  </ul>
                 </div>
-              </div>
-              <div>
-                <ul className="mt-3" style={{ lineHeight: "250%" }}>
-                  <li>Kill Weed Spray</li>
-                  <li>Trimming / Bush Trim</li>
-                  <li>Edging</li>
-                  <li>Maintaining Yard</li>
-                  <li>Grass Lining</li>
-                  <li>2-3 times a Month</li>
-                </ul>
-              </div>
-              <div className="d-flex justify-content-center">
-                <Button>Get Started</Button>
-              </div>
-            </Card.Body>
-          </Card>
+                <div className="d-flex justify-content-center">
+                  <Button type="submit">Get Started</Button>
+                </div>
+              </Card.Body>
+            </Card>
+          </form>
         </div>
       </Container>
 

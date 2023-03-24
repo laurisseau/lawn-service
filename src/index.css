@@ -66,3 +66,7 @@ code {
 .red{
   border: 1px solid red;
 }
+
+.nav-text{
+  font-size: 22px;
+}
