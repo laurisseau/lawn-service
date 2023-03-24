@@ -1,39 +1,46 @@
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomeScreen from "./screens/HomeScreen";
+import SigninScreen from "./screens/SigninScreen";
+import SignupScreen from "./screens/SignupScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import "./App.css";
 
 function App() {
   return (
     <div>
-      <header
-        style={{
-          height: "90vh",
-          backgroundColor: "#1F1F1E",
-          color: "white",
-        }}
-      >
-        <div className="img-overlay"></div>
-        <img
-          src="https://images.unsplash.com/photo-1458245201577-fc8a130b8829?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1476&q=80"
-          className="img"
-          alt="Cutting Grass"
-        ></img>
-
-        <div className="strip"></div>
-        <div className="header-box">
-          <h1> Lorem Ipsum is simply dummy text of the printing.</h1>
-          <button className="header-button">Call Us Now</button>
-          <button
-            className="header-button"
-            style={{ backgroundColor: "white" }}
-          >
-            Contact Us
-          </button>
+      <BrowserRouter>
+        <ToastContainer position="bottom-center" autoClose={1000} />
+        <div>
+          <main>
+            <Routes>
+              <Route path="/" element={<HomeScreen />} />
+              <Route path="/signin" element={<SigninScreen />} />
+              <Route path="/signup" element={<SignupScreen />} />
+              <Route
+                path="/forgotPassword"
+                element={<ForgotPasswordScreen />}
+              />
+              <Route
+                path="/resetPassword/:token"
+                element={<ResetPasswordScreen />}
+              />
+              <Route path="/profile" element={<ProfileScreen />} />
+            </Routes>
+          </main>
         </div>
-      </header>
+      </BrowserRouter>
+    </div>
+  );
+}
 
-      <Container className="mt-5" style={{ marginBottom: "100px"}}>
+export default App;
+
+/*
+<Container className="mt-5" style={{ marginBottom: "100px"}}>
         <div className="text-center mb-5 pt-5">
           <h1>Choose Your Right Plan</h1>
           <p>Upgrade to Premium & Get more Services!</p>
@@ -116,36 +123,4 @@ function App() {
         </div>
       </Container>
 
-      <footer 
-        style={{ backgroundColor: "#252525", height: "170px", color: "white" }}
-      >
-        <Container
-          className="d-flex justify-content-md-between align-items-center flex-wrap justify-content-center"
-          style={{ height: "100%" }}
-        >
-          <div>
-            <h1 style={{ fontSize: "18px" }}>© 2023 Lawn Service</h1>
-            <p>Icon by www.wishforge.games on freeicons.io</p>
-            <a
-              style={{ color: "white" }}
-              href="https://www.instagram.com/yardi_kitchen/"
-            >
-              <i
-                className="fa-brands fa-instagram"
-                style={{ fontSize: "30px" }}
-              ></i>
-            </a>
-          </div>
-
-          <div>
-            <h1 style={{ fontSize: "18px" }}>
-              WEB DESIGN BY LAURISSEAU JOSEPH
-            </h1>
-          </div>
-        </Container>
-      </footer>
-    </div>
-  );
-}
-
-export default App;
+*/
