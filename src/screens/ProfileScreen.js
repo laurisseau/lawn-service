@@ -36,6 +36,16 @@ export default function ProfileScreen() {
     loadingUpdate: false,
   });
 
+  const testSi = "sub_1MqkDKK7StTt0PrseV7N8k5M"
+  const cancelSubscription = async () => {
+    try {
+      const data = await axios.delete(`/v1/subscriptions/${testSi}`);
+      console.log(data)
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -69,7 +79,7 @@ export default function ProfileScreen() {
 
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <div className="container small-container">
         <Helmet>
           <title>User Profile</title>
@@ -132,6 +142,9 @@ export default function ProfileScreen() {
           ) : (
             <div className="mb-3">
               <Button type="submit">Update</Button>
+              <Button onClick={cancelSubscription} className="ms-3">
+                Cancel Subscription
+              </Button>
             </div>
           )}
         </form>
