@@ -20,6 +20,7 @@ function App() {
               <Route path="/" element={<HomeScreen />} />
               <Route path="/signin" element={<SigninScreen />} />
               <Route path="/signup" element={<SignupScreen />} />
+              <Route path="/session_id={CHECKOUT_SESSION_ID}" element={<successScreen />} />
               <Route
                 path="/forgotPassword"
                 element={<ForgotPasswordScreen />}
