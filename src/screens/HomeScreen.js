@@ -5,29 +5,54 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import axios from "axios";
 import { Store } from "../Store";
-import { useContext} from "react";
+import { useContext } from "react";
 //import { useNavigate } from "react-router-dom";
 import "../App.css";
 
+
+
+
+
 export default function HomeScreen() {
+
   const { state } = useContext(Store);
   const { userInfo } = state;
-  //const navigate = useNavigate();
+  //console.log(userInfo)
 
+  const subscriptionButton = () => {
+    if(userInfo){
+      return  (
+        <Button type="submit">Get Started</Button>
+      )
+    }else if(!userInfo){
+      return(
+        <Button href="/signup">Get Started</Button>
+      )
+    }else if(userInfo){
+      console.log('hi')
+    }
+  }
+
+  const userId = userInfo._id;
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const priceId = e.target[0].value
-      const data = await axios.post("/create-checkout-session", {  
-        priceId
+      const priceId = e.target[0].value;
+
+      const data = await axios.post("/create-checkout-session", {
+        priceId,
       });
 
       if (data) {
-        //console.log(data.data)
-        window.location = data.data
+        const sessionId = data.data.id;
+        window.location = data.data.url;
+        const sessionUpdate = await axios.put("/updateSessionId", {
+          userId,
+          sessionId,
+        });
       }
-      
-     //console.log()
+
+      //console.log()
     } catch (err) {
       console.log(err);
     }
@@ -133,7 +158,6 @@ export default function HomeScreen() {
           </form>
         </div>
       </Container>
-
       <footer
         style={{ backgroundColor: "#252525", height: "170px", color: "white" }}
       >
