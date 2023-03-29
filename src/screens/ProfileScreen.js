@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useState } from "react";
+import { useContext, useReducer, useState, useEffect } from "react";
 import Navbar from "../componets/Navbar";
 import { Helmet } from "react-helmet-async";
 import Form from "react-bootstrap/Form";
@@ -31,19 +31,47 @@ export default function ProfileScreen() {
   const [number, setNumber] = useState(userInfo.number);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [subscriptionId, setSubscriptionId] = useState("");
+  const [subscribed, setSubscribed] = useState("");
   const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
     loadingUpdate: false,
   });
 
-  const testSi = "sub_1MqkDKK7StTt0PrseV7N8k5M"
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get(
+          `/api/users/getUserById/${userInfo._id}`,
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+
+        if (result) {
+          setSubscriptionId(result.data.subscriptionId);
+          setSubscribed(result.data.subscribed);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [userInfo._id, userInfo.token]);
+
   const cancelSubscription = async () => {
     try {
-      const data = await axios.delete(`/v1/subscriptions/${testSi}`);
-      console.log(data)
+      const data = await axios.delete(`/v1/subscriptions/${subscriptionId}`);
+      console.log(data);
+      if (data) {
+        window.location.reload();
+      }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
+  };
+
+  const reactivateSubscription = async () => {
+    console.log("hi");
   };
 
   const submitHandler = async (e) => {
@@ -76,6 +104,37 @@ export default function ProfileScreen() {
       toast.error(getError(err));
     }
   };
+
+  function SubscriptionButtons(props) {
+    const propsSubscribed = props.subscribed;
+    const propsSubscriptionId = props.subscriptionId;
+
+    if (propsSubscribed) {
+      return (
+        <div className="mb-3">
+          <Button type="submit">Update</Button>
+          <Button onClick={cancelSubscription} className="ms-3">
+            Cancel Subscription
+          </Button>
+        </div>
+      );
+    } else if (!propsSubscribed && propsSubscriptionId === "") {
+      return (
+        <div className="mb-3">
+          <Button type="submit">Update</Button>
+        </div>
+      );
+    } else if (!propsSubscribed && propsSubscriptionId) {
+      return (
+        <div className="mb-3">
+          <Button type="submit">Update</Button>
+          <Button onClick={reactivateSubscription} className="ms-3">
+            Reactivate Subscription
+          </Button>
+        </div>
+      );
+    }
+  }
 
   return (
     <div>
@@ -140,12 +199,10 @@ export default function ProfileScreen() {
               <Button type="submit">Update...</Button>
             </div>
           ) : (
-            <div className="mb-3">
-              <Button type="submit">Update</Button>
-              <Button onClick={cancelSubscription} className="ms-3">
-                Cancel Subscription
-              </Button>
-            </div>
+            <SubscriptionButtons
+              subscribed={subscribed}
+              subscriptionId={subscriptionId}
+            />
           )}
         </form>
       </div>

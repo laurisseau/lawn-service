@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -6,34 +7,52 @@ import Navbar from "react-bootstrap/Navbar";
 import axios from "axios";
 import { Store } from "../Store";
 import { useContext } from "react";
-//import { useNavigate } from "react-router-dom";
 import "../App.css";
 
-
-
-
-
 export default function HomeScreen() {
-
   const { state } = useContext(Store);
   const { userInfo } = state;
-  //console.log(userInfo)
 
-  const subscriptionButton = () => {
-    if(userInfo){
-      return  (
-        <Button type="submit">Get Started</Button>
-      )
-    }else if(!userInfo){
-      return(
-        <Button href="/signup">Get Started</Button>
-      )
-    }else if(userInfo){
-      console.log('hi')
-    }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get(
+          `/api/users/getUserById/${userInfo._id}`,
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+//----------------------------------------------------------------------------------------------------------------------------------------
+        if(result){
+          console.log(result)
+        }
+//----------------------------------------------------------------------------------------------------------------------------------------
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [userInfo._id, userInfo.token]);
+
+  let userId = "";
+
+  if (userInfo) {
+    userId = userInfo._id;
   }
 
-  const userId = userInfo._id;
+  const subscriptionButton = (props) => {
+
+    const subPrice = "sub_hieu"
+
+    if (userInfo) {
+      return <Button type="submit">Get Started</Button>;
+    } else if (!userInfo) {
+      return <Button href="/signup">Get Started</Button>;
+    } else if (userInfo && subPrice === "123") {
+      console.log("hi");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -50,6 +69,11 @@ export default function HomeScreen() {
           userId,
           sessionId,
         });
+//----------------------------------------------------------------------------------------------------------------------------------------
+        if(sessionUpdate){
+          console.log(sessionUpdate)
+        }
+//----------------------------------------------------------------------------------------------------------------------------------------
       }
 
       //console.log()
