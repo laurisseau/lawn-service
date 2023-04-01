@@ -31,6 +31,7 @@ export default function ProfileScreen() {
   const [number, setNumber] = useState(userInfo.number);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [subscriptionPrice, setSubscriptionPrice] = useState("");
   const [subscriptionId, setSubscriptionId] = useState("");
   const [subscribed, setSubscribed] = useState("");
   const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
@@ -46,8 +47,10 @@ export default function ProfileScreen() {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
         );
+        console.log(result.data)
 
         if (result) {
+          setSubscriptionPrice(result.data.subscriptionPrice);
           setSubscriptionId(result.data.subscriptionId);
           setSubscribed(result.data.subscribed);
         }
@@ -107,24 +110,25 @@ export default function ProfileScreen() {
 
   function SubscriptionButtons(props) {
     const propsSubscribed = props.subscribed;
+    const propsSubscriptionPrice = props.subscriptionPrice;
     const propsSubscriptionId = props.subscriptionId;
 
-    if (propsSubscribed) {
+    if (propsSubscribed && propsSubscriptionPrice) {
       return (
         <div className="mb-3">
           <Button type="submit">Update</Button>
-          <Button onClick={cancelSubscription} className="ms-3">
+          <Button variant="danger" onClick={cancelSubscription} className="ms-3">
             Cancel Subscription
           </Button>
         </div>
       );
-    } else if (!propsSubscribed && propsSubscriptionId === "") {
+    } else if (!propsSubscribed && propsSubscriptionPrice === "") {
       return (
         <div className="mb-3">
           <Button type="submit">Update</Button>
         </div>
       );
-    } else if (!propsSubscribed && propsSubscriptionId) {
+    } else if (!propsSubscribed && propsSubscriptionPrice === "" && propsSubscriptionId) {
       return (
         <div className="mb-3">
           <Button type="submit">Update</Button>
@@ -202,6 +206,7 @@ export default function ProfileScreen() {
             <SubscriptionButtons
               subscribed={subscribed}
               subscriptionId={subscriptionId}
+              subscriptionPrice={subscriptionPrice}
             />
           )}
         </form>

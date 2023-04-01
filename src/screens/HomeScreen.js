@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -10,6 +10,8 @@ import { useContext } from "react";
 import "../App.css";
 
 export default function HomeScreen() {
+  const priceOne  = "price_1Mp2jqK7StTt0Prs0jfLd0R5"
+  const [userData, setUserData] = useState('')
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -24,7 +26,7 @@ export default function HomeScreen() {
         );
 //----------------------------------------------------------------------------------------------------------------------------------------
         if(result){
-          console.log(result)
+          setUserData(result.data)
         }
 //----------------------------------------------------------------------------------------------------------------------------------------
       } catch (err) {
@@ -39,17 +41,21 @@ export default function HomeScreen() {
   if (userInfo) {
     userId = userInfo._id;
   }
+//console.log(userData)
+//console.log(userData.subscriptionId)
 
-  const subscriptionButton = (props) => {
+  const SubscriptionButton = (props) => {
 
-    const subPrice = "sub_hieu"
+    const subPrice = props.price
 
-    if (userInfo) {
+
+    if (userInfo && subPrice !== "") {
       return <Button type="submit">Get Started</Button>;
     } else if (!userInfo) {
       return <Button href="/signup">Get Started</Button>;
-    } else if (userInfo && subPrice === "123") {
-      console.log("hi");
+                                        // userData.SubscriptionPrice
+    } else if (userInfo && subPrice === "price_1Mp2jqK7StTt0Prs0jfLd0R5") {
+      return <Button disabled>Get Started</Button>
     }
   };
 
@@ -152,7 +158,7 @@ export default function HomeScreen() {
             <input
               type="hidden"
               name="priceId"
-              value="price_1Mp2jqK7StTt0Prs0jfLd0R5"
+              value= {priceOne}
             />
             <Card className="ms-3 me-3 shadow" style={{ width: "18rem" }}>
               <Card.Body>
@@ -175,7 +181,7 @@ export default function HomeScreen() {
                   </ul>
                 </div>
                 <div className="d-flex justify-content-center">
-                  <Button type="submit">Get Started</Button>
+                  <SubscriptionButton price={priceOne}/>
                 </div>
               </Card.Body>
             </Card>
