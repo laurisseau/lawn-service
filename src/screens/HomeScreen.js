@@ -54,7 +54,7 @@ export default function HomeScreen() {
       order: 3,
     },
   ];
-  //const priceOne = "price_1Mp2jqK7StTt0Prs0jfLd0R5";
+
   const [userData, setUserData] = useState("");
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -68,11 +68,10 @@ export default function HomeScreen() {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
         );
-        //----------------------------------------------------------------------------------------------------------------------------------------
+
         if (result) {
           setUserData(result.data);
         }
-        //----------------------------------------------------------------------------------------------------------------------------------------
       } catch (err) {
         console.log(err);
       }
@@ -85,23 +84,35 @@ export default function HomeScreen() {
   if (userInfo) {
     userId = userInfo._id;
   }
-  //console.log(userData)
-  //console.log(userData.subscriptionId)
 
   const SubscriptionButton = (props) => {
-    const subPrice = props.price;
-    const userPriceProps = props.userData.subscriptionPrice
+    if (
+      userInfo &&
+      userData.subscriptionPrice &&
+      props.disabled !== "disabled"
+    ) {
+      return (
+        <Button
+          onClick={() =>
+            console.log(
+              "update subscription if customer is already in database"
+            )
+          }
+          className={props.disabled}
+        >
+          already subscribed
+        </Button>
+      );
+    }
 
-    //console.log(subPrice)
-    //console.log(userPriceProps)
-
-    if (userInfo && subPrice !== "") {
-      return <Button type="submit">Get Started</Button>;
+    if (userInfo) {
+      return (
+        <Button type="submit" className={props.disabled}>
+          Get Started
+        </Button>
+      );
     } else if (!userInfo) {
       return <Button href="/signup">Get Started</Button>;
-      // userData.SubscriptionPrice
-    } else if (userInfo && subPrice === userPriceProps) {
-      return <Button disabled>Get Starte</Button>;
     }
   };
 
@@ -120,16 +131,12 @@ export default function HomeScreen() {
         const sessionUpdate = await axios.put("/updateSessionId", {
           userId,
           sessionId,
-          priceId
-          
         });
 
         if (sessionUpdate) {
           window.location = data.data.url;
         }
       }
-
-      //console.log()
     } catch (err) {
       console.log(err);
     }
@@ -205,7 +212,10 @@ export default function HomeScreen() {
       >
         <Row>
           {optionObject.map((option, optionId) => (
-            <Col key={optionId} className={`order-${option.order} align-self-center`}>
+            <Col
+              key={optionId}
+              className={`order-${option.order} align-self-center`}
+            >
               {option.main ? (
                 <div className="order-2">
                   <form onSubmit={handleSubmit}>
@@ -228,7 +238,11 @@ export default function HomeScreen() {
                           </ul>
                         </div>
                         <div className="d-flex justify-content-center">
-                          <SubscriptionButton price={option.price} userData={userData} />
+                          {userData.subscriptionPrice === option.price ? (
+                            <SubscriptionButton disabled="disabled" />
+                          ) : (
+                            <SubscriptionButton />
+                          )}
                         </div>
                       </Card.Body>
                     </Card>
@@ -259,7 +273,11 @@ export default function HomeScreen() {
                           </ul>
                         </div>
                         <div className="d-flex justify-content-center">
-                          <SubscriptionButton price={option.price} userData={userData} />
+                          {userData.subscriptionPrice === option.price ? (
+                            <SubscriptionButton disabled="disabled" />
+                          ) : (
+                            <SubscriptionButton />
+                          )}
                         </div>
                       </Card.Body>
                     </Card>
@@ -302,14 +320,3 @@ export default function HomeScreen() {
     </div>
   );
 }
-
-/*
-
-  <ul className="mt-3" style={{ lineHeight: "250%" }}>
-    <li>{testArray.map((word, id)=>(
-        word
-    ))}</li>
-
-  </ul>
-
-*/

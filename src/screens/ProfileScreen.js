@@ -63,7 +63,6 @@ export default function ProfileScreen() {
   const cancelSubscription = async () => {
     try {
       const data = await axios.delete(`/v1/subscriptions/${subscriptionId}`);
-      console.log(data);
       if (data) {
         window.location.reload();
       }
