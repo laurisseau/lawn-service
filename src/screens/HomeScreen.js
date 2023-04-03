@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -10,8 +12,50 @@ import { useContext } from "react";
 import "../App.css";
 
 export default function HomeScreen() {
-  const priceOne  = "price_1Mp2jqK7StTt0Prs0jfLd0R5"
-  const [userData, setUserData] = useState('')
+  const optionObject = [
+    {
+      price: "price_1Ms4r9K7StTt0PrsZLnxFcfd",
+      priceAmount: "$200",
+      packageName: "Starter",
+      optionList: [
+        "daily",
+        "Lorem Ipsum is dummy text",
+        "Lorem Ipsum is dummy text",
+        "Lorem Ipsum is dummy text",
+        "Lorem Ipsum is dummy text",
+      ],
+      main: true,
+      order: 2,
+    },
+    {
+      price: "price_1Mp2jqK7StTt0Prs0jfLd0R5",
+      priceAmount: "$100",
+      packageName: "Basic",
+      optionList: [
+        "biweekly",
+        "Lorem Ipsum is dummy text",
+        "Lorem Ipsum is dummy text",
+        "Lorem Ipsum is dummy text",
+      ],
+      main: false,
+      order: 1,
+    },
+    {
+      price: "price_1Ms4s1K7StTt0PrsNlMkApMv",
+      priceAmount: "$300",
+      packageName: "Advanced",
+      optionList: [
+        "monthly",
+        "Lorem Ipsum is dummy text",
+        "Lorem Ipsum is dummy text",
+        "Lorem Ipsum is dummy text",
+      ],
+      main: false,
+      order: 3,
+    },
+  ];
+  //const priceOne = "price_1Mp2jqK7StTt0Prs0jfLd0R5";
+  const [userData, setUserData] = useState("");
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -24,11 +68,11 @@ export default function HomeScreen() {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
         );
-//----------------------------------------------------------------------------------------------------------------------------------------
-        if(result){
-          setUserData(result.data)
+        //----------------------------------------------------------------------------------------------------------------------------------------
+        if (result) {
+          setUserData(result.data);
         }
-//----------------------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------------
       } catch (err) {
         console.log(err);
       }
@@ -41,21 +85,23 @@ export default function HomeScreen() {
   if (userInfo) {
     userId = userInfo._id;
   }
-//console.log(userData)
-//console.log(userData.subscriptionId)
+  //console.log(userData)
+  //console.log(userData.subscriptionId)
 
   const SubscriptionButton = (props) => {
+    const subPrice = props.price;
+    const userPriceProps = props.userData.subscriptionPrice
 
-    const subPrice = props.price
-
+    //console.log(subPrice)
+    //console.log(userPriceProps)
 
     if (userInfo && subPrice !== "") {
       return <Button type="submit">Get Started</Button>;
     } else if (!userInfo) {
       return <Button href="/signup">Get Started</Button>;
-                                        // userData.SubscriptionPrice
-    } else if (userInfo && subPrice === "price_1Mp2jqK7StTt0Prs0jfLd0R5") {
-      return <Button disabled>Get Started</Button>
+      // userData.SubscriptionPrice
+    } else if (userInfo && subPrice === userPriceProps) {
+      return <Button disabled>Get Starte</Button>;
     }
   };
 
@@ -70,16 +116,17 @@ export default function HomeScreen() {
 
       if (data) {
         const sessionId = data.data.id;
-        window.location = data.data.url;
+
         const sessionUpdate = await axios.put("/updateSessionId", {
           userId,
           sessionId,
+          priceId
+          
         });
-//----------------------------------------------------------------------------------------------------------------------------------------
-        if(sessionUpdate){
-          console.log(sessionUpdate)
+
+        if (sessionUpdate) {
+          window.location = data.data.url;
         }
-//----------------------------------------------------------------------------------------------------------------------------------------
       }
 
       //console.log()
@@ -148,46 +195,82 @@ export default function HomeScreen() {
         </div>
       </header>
 
-      <Container className="mt-5" style={{ marginBottom: "100px" }}>
-        <div className="text-center mb-5 pt-5">
-          <h1>Choose Your Right Plan</h1>
-          <p>Upgrade to Premium & Get more Services!</p>
-        </div>
-        <div className=" d-flex align-items-center justify-content-center">
-          <form onSubmit={handleSubmit}>
-            <input
-              type="hidden"
-              name="priceId"
-              value= {priceOne}
-            />
-            <Card className="ms-3 me-3 shadow" style={{ width: "18rem" }}>
-              <Card.Body>
-                <div className="d-flex justify-content-between border-bottom">
-                  <div className="mb-3 mt-3">
-                    <Card.Title>StartUp</Card.Title>
-                  </div>
-                  <div className="mb-3 mt-3">
-                    <Card.Title>$100/m</Card.Title>
-                  </div>
+      <div className="text-center mb-5 pt-5">
+        <h1>Choose Your Right Plan</h1>
+        <p>Upgrade to Premium & Get more Services!</p>
+      </div>
+      <Container
+        className="mt-5 d-flex justify-content-center"
+        style={{ marginBottom: "100px" }}
+      >
+        <Row>
+          {optionObject.map((option, optionId) => (
+            <Col key={optionId} className={`order-${option.order} align-self-center`}>
+              {option.main ? (
+                <div className="order-2">
+                  <form onSubmit={handleSubmit}>
+                    <input type="hidden" name="priceId" value={option.price} />
+                    <Card className="shadow" style={{ width: "18rem" }}>
+                      <Card.Body>
+                        <div className="d-flex justify-content-between border-bottom">
+                          <div className="mb-3 mt-3">
+                            <Card.Title>{option.packageName}</Card.Title>
+                          </div>
+                          <div className="mb-3 mt-3">
+                            <Card.Title>{option.priceAmount}/m</Card.Title>
+                          </div>
+                        </div>
+                        <div>
+                          <ul className="mt-3" style={{ lineHeight: "250%" }}>
+                            {option.optionList.map((word, id) => (
+                              <li key={id}>{word}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="d-flex justify-content-center">
+                          <SubscriptionButton price={option.price} userData={userData} />
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </form>
                 </div>
+              ) : (
                 <div>
-                  <ul className="mt-3" style={{ lineHeight: "250%" }}>
-                    <li>Kill Weed Spray</li>
-                    <li>Trimming / Bush Trim</li>
-                    <li>Edging</li>
-                    <li>Maintaining Yard</li>
-                    <li>Grass Lining</li>
-                    <li>2-3 times a Month</li>
-                  </ul>
+                  <form onSubmit={handleSubmit}>
+                    <input type="hidden" name="priceId" value={option.price} />
+                    <Card
+                      className="shadow"
+                      style={{ width: "18rem", height: "330px" }}
+                    >
+                      <Card.Body>
+                        <div className="d-flex justify-content-between border-bottom ">
+                          <div className="mb-3 mt-2">
+                            <Card.Title>{option.packageName}</Card.Title>
+                          </div>
+                          <div className="mb-3 mt-2">
+                            <Card.Title>{option.priceAmount}/m</Card.Title>
+                          </div>
+                        </div>
+                        <div>
+                          <ul className="mt-3" style={{ lineHeight: "250%" }}>
+                            {option.optionList.map((word, id) => (
+                              <li key={id}>{word}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="d-flex justify-content-center">
+                          <SubscriptionButton price={option.price} userData={userData} />
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </form>
                 </div>
-                <div className="d-flex justify-content-center">
-                  <SubscriptionButton price={priceOne}/>
-                </div>
-              </Card.Body>
-            </Card>
-          </form>
-        </div>
+              )}
+            </Col>
+          ))}
+        </Row>
       </Container>
+
       <footer
         style={{ backgroundColor: "#252525", height: "170px", color: "white" }}
       >
@@ -219,3 +302,14 @@ export default function HomeScreen() {
     </div>
   );
 }
+
+/*
+
+  <ul className="mt-3" style={{ lineHeight: "250%" }}>
+    <li>{testArray.map((word, id)=>(
+        word
+    ))}</li>
+
+  </ul>
+
+*/

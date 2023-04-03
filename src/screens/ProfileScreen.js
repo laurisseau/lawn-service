@@ -47,7 +47,6 @@ export default function ProfileScreen() {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
         );
-        console.log(result.data)
 
         if (result) {
           setSubscriptionPrice(result.data.subscriptionPrice);
@@ -122,7 +121,7 @@ export default function ProfileScreen() {
           </Button>
         </div>
       );
-    } else if (!propsSubscribed && propsSubscriptionPrice === "") {
+    } else if (!propsSubscribed && propsSubscriptionPrice === "" && propsSubscriptionId === "") {
       return (
         <div className="mb-3">
           <Button type="submit">Update</Button>
