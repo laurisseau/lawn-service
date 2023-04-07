@@ -1,7 +1,8 @@
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer } from 'react-toastify'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomeScreen from "./screens/HomeScreen";
+import ViewCustomers from "./screens/ViewCustomers";
 import SigninScreen from "./screens/SigninScreen";
 import SignupScreen from "./screens/SignupScreen";
 import ProfileScreen from "./screens/ProfileScreen";
@@ -18,9 +19,11 @@ function App() {
           <main>
             <Routes>
               <Route path="/" element={<HomeScreen />} />
+              <Route path="/viewCustomers" element={<ViewCustomers />} />
               <Route path="/signin" element={<SigninScreen />} />
               <Route path="/signup" element={<SignupScreen />} />
               <Route path="/session_id={CHECKOUT_SESSION_ID}" element={<successScreen />} />
+
               <Route
                 path="/forgotPassword"
                 element={<ForgotPasswordScreen />}

@@ -1,4 +1,3 @@
-import Navbar from "../componets/Navbar";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -9,6 +8,8 @@ import { useContext, useState, useEffect } from "react";
 import { Store } from "../Store";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
+import NavBarComp from "../componets/NavbarComp";
+import Navbar from "react-bootstrap/Navbar";
 
 export default function SignupScreen() {
   const navigate = useNavigate();
@@ -20,6 +21,12 @@ export default function SignupScreen() {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [lstate, setLstate] = useState("");
+  const [zipcode, setZipcode] = useState("");
+
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -34,6 +41,10 @@ export default function SignupScreen() {
         lastname,
         email,
         number,
+        address,
+        city,
+        lstate,
+        zipcode,
         password,
         confirmPassword,
       });
@@ -56,7 +67,11 @@ export default function SignupScreen() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <NavBarComp />
+        </Container>
+      </Navbar>
 
       <Container className="small-container mt-5">
         <Helmet>
@@ -99,6 +114,65 @@ export default function SignupScreen() {
               onChange={(e) => setNumber(e.target.value)}
             />
           </Form.Group>
+
+
+
+          <Form.Group className="mb-3" controlId="address">
+            <Form.Label>Address</Form.Label>
+            <Form.Control
+              type="address"
+              required
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="city">
+            <Form.Label>City</Form.Label>
+            <Form.Control
+              type="city"
+              required
+              onChange={(e) => setCity(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="state">
+            <Form.Label>State</Form.Label>
+            <Form.Control
+              type="state"
+              required
+              onChange={(e) => setLstate(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="zipcode">
+            <Form.Label>Zipcode</Form.Label>
+            <Form.Control
+              type="number"
+              required
+              onChange={(e) => setZipcode(e.target.value)}
+            />
+          </Form.Group>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
           <Form.Group className="mb-3" controlId="password">
             <Form.Label>Password</Form.Label>

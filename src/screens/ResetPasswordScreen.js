@@ -5,8 +5,10 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
-import Navbar from "../componets/Navbar";
 import axios from "axios";
+import NavBarComp from "../componets/NavbarComp";
+import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
 
 export default function ResetPasswordScreen() {
   const params = useParams();
@@ -30,7 +32,11 @@ export default function ResetPasswordScreen() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <NavBarComp />
+        </Container>
+      </Navbar>
       <div className="container small-container">
         <Helmet>
           <title>Reset Password</title>

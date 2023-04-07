@@ -6,7 +6,8 @@ import Axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
-import Navbar from "../componets/Navbar";
+import NavBarComp from "../componets/NavbarComp";
+import Navbar from "react-bootstrap/Navbar";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
@@ -26,7 +27,11 @@ export default function ForgotPasswordScreen() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <NavBarComp />
+        </Container>
+      </Navbar>
       <Container className="small-container">
         <Helmet>
           <title>Forgot Password</title>

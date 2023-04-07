@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import NavBarComp from "../componets/NavbarComp";
 import axios from "axios";
 import { Store } from "../Store";
 import { useContext } from "react";
@@ -55,52 +54,45 @@ export default function HomeScreen() {
     },
   ];
 
-  const [userData, setUserData] = useState("");
   const { state } = useContext(Store);
-  const { userInfo } = state;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await axios.get(
-          `/api/users/getUserById/${userInfo._id}`,
-          {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-          }
-        );
-
-        if (result) {
-          setUserData(result.data);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchData();
-  }, [userInfo._id, userInfo.token]);
+  let { userInfo } = state;
 
   let userId = "";
 
   if (userInfo) {
     userId = userInfo._id;
+  } else {
+    userInfo = "";
   }
 
+  const userSubscriptionId = userInfo.subscriptionId;
+
+  const changeSubscription = async (pickedPrice) => {
+    try {
+      const { data } = await axios.put("/changeSubscription", {
+        pickedPrice,
+        userSubscriptionId,
+      });
+
+      localStorage.setItem("userInfo", JSON.stringify(data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const SubscriptionButton = (props) => {
+    const onClickPickedPrice = () => {
+      changeSubscription(props.price);
+    };
+
     if (
       userInfo &&
-      userData.subscriptionPrice &&
+      userInfo.subscriptionPrice &&
       props.disabled !== "disabled"
     ) {
       return (
-        <Button
-          onClick={() =>
-            console.log(
-              "update subscription if customer is already in database"
-            )
-          }
-          className={props.disabled}
-        >
-          already subscribed
+        <Button onClick={onClickPickedPrice} className={props.disabled}>
+          Get Started
         </Button>
       );
     }
@@ -158,28 +150,11 @@ export default function HomeScreen() {
             position: "absolute",
             width: "100%",
             zIndex: "1",
-            height: "70px",
+            height: "55px",
           }}
         >
-          <Container className="d-flex justify-content-end">
-            <div>
-              {userInfo ? (
-                <Nav className="me-auto ">
-                  <Nav.Link href="/profile">
-                    <p className="nav-text">Profile</p>
-                  </Nav.Link>
-                </Nav>
-              ) : (
-                <Nav className="me-auto">
-                  <Nav.Link href="/signup">
-                    <p className="nav-text">Signup</p>
-                  </Nav.Link>
-                  <Nav.Link href="/signin">
-                    <p className="nav-text">Signin</p>
-                  </Nav.Link>
-                </Nav>
-              )}
-            </div>
+          <Container className="d-flex ">
+            <NavBarComp />
           </Container>
         </Navbar>
         <div className="img-overlay"></div>
@@ -238,10 +213,10 @@ export default function HomeScreen() {
                           </ul>
                         </div>
                         <div className="d-flex justify-content-center">
-                          {userData.subscriptionPrice === option.price ? (
+                          {userInfo.subscriptionPrice === option.price ? (
                             <SubscriptionButton disabled="disabled" />
                           ) : (
-                            <SubscriptionButton />
+                            <SubscriptionButton price={option.price} />
                           )}
                         </div>
                       </Card.Body>
@@ -273,10 +248,10 @@ export default function HomeScreen() {
                           </ul>
                         </div>
                         <div className="d-flex justify-content-center">
-                          {userData.subscriptionPrice === option.price ? (
+                          {userInfo.subscriptionPrice === option.price ? (
                             <SubscriptionButton disabled="disabled" />
                           ) : (
-                            <SubscriptionButton />
+                            <SubscriptionButton price={option.price} />
                           )}
                         </div>
                       </Card.Body>

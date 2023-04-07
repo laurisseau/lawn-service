@@ -1,4 +1,3 @@
-import Navbar from "../componets/Navbar";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -9,6 +8,8 @@ import { useContext, useState, useEffect } from "react";
 import { Store } from "../Store";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
+import NavBarComp from "../componets/NavbarComp";
+import Navbar from "react-bootstrap/Navbar";
 
 export default function SigninScreen() {
   const navigate = useNavigate();
@@ -45,7 +46,11 @@ export default function SigninScreen() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <NavBarComp />
+        </Container>
+      </Navbar>
       <Container className="small-container">
         <Helmet>
           <title>Sign In</title>

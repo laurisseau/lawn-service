@@ -1,5 +1,6 @@
 import { useContext, useReducer, useState, useEffect } from "react";
-import Navbar from "../componets/Navbar";
+import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
 import { Helmet } from "react-helmet-async";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -7,6 +8,7 @@ import { Store } from "../Store";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
 import axios from "axios";
+import NavBarComp from "../componets/NavbarComp";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -34,6 +36,7 @@ export default function ProfileScreen() {
   const [subscriptionPrice, setSubscriptionPrice] = useState("");
   const [subscriptionId, setSubscriptionId] = useState("");
   const [subscribed, setSubscribed] = useState("");
+  const [unpaidLink, setUnpaidLink] = useState("");
   const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
     loadingUpdate: false,
   });
@@ -52,6 +55,7 @@ export default function ProfileScreen() {
           setSubscriptionPrice(result.data.subscriptionPrice);
           setSubscriptionId(result.data.subscriptionId);
           setSubscribed(result.data.subscribed);
+          setUnpaidLink(result.data.unpaidLink);
         }
       } catch (err) {
         console.log(err);
@@ -69,10 +73,6 @@ export default function ProfileScreen() {
     } catch (err) {
       console.log(err);
     }
-  };
-
-  const reactivateSubscription = async () => {
-    console.log("hi");
   };
 
   const submitHandler = async (e) => {
@@ -109,30 +109,35 @@ export default function ProfileScreen() {
   function SubscriptionButtons(props) {
     const propsSubscribed = props.subscribed;
     const propsSubscriptionPrice = props.subscriptionPrice;
-    const propsSubscriptionId = props.subscriptionId;
+
+    if (!propsSubscribed && unpaidLink) {
+      return (
+        <div className="mb-3">
+          <Button type="submit">Update</Button>
+          <Button variant="danger" href={unpaidLink} className="ms-3">
+            Pay Subscription
+          </Button>
+        </div>
+      );
+    }
 
     if (propsSubscribed && propsSubscriptionPrice) {
       return (
         <div className="mb-3">
           <Button type="submit">Update</Button>
-          <Button variant="danger" onClick={cancelSubscription} className="ms-3">
+          <Button
+            variant="danger"
+            onClick={cancelSubscription}
+            className="ms-3"
+          >
             Cancel Subscription
           </Button>
         </div>
       );
-    } else if (!propsSubscribed && propsSubscriptionPrice === "" && propsSubscriptionId === "") {
+    } else if (!propsSubscribed) {
       return (
         <div className="mb-3">
           <Button type="submit">Update</Button>
-        </div>
-      );
-    } else if (!propsSubscribed && propsSubscriptionPrice === "" && propsSubscriptionId) {
-      return (
-        <div className="mb-3">
-          <Button type="submit">Update</Button>
-          <Button onClick={reactivateSubscription} className="ms-3">
-            Reactivate Subscription
-          </Button>
         </div>
       );
     }
@@ -140,7 +145,11 @@ export default function ProfileScreen() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <NavBarComp />
+        </Container>
+      </Navbar>
       <div className="container small-container">
         <Helmet>
           <title>User Profile</title>
