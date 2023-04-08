@@ -7,7 +7,7 @@ import Navbar from "react-bootstrap/Navbar";
 import NavBarComp from "../componets/NavbarComp";
 import axios from "axios";
 import { Store } from "../Store";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../App.css";
 
 export default function HomeScreen() {
@@ -54,18 +54,43 @@ export default function HomeScreen() {
     },
   ];
 
+  const [userData, setUserData] = useState("")
   const { state } = useContext(Store);
   let { userInfo } = state;
 
   let userId = "";
+  let userToken = ""
 
   if (userInfo) {
     userId = userInfo._id;
+    userToken = userInfo.token
   } else {
     userInfo = "";
   }
 
-  const userSubscriptionId = userInfo.subscriptionId;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const {data} = await axios.get(
+          `/api/users/getUserById/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${userToken}` },
+          }
+        );
+        setUserData(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    if (userInfo) {
+      fetchData();
+    }
+  }, [userInfo, userId, userToken]);
+
+  //console.log()
+
+  const userSubscriptionId = userData.subscriptionId;
 
   const changeSubscription = async (pickedPrice) => {
     try {
@@ -74,7 +99,10 @@ export default function HomeScreen() {
         userSubscriptionId,
       });
 
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      if (data) {
+        window.location.reload();
+      }
+
     } catch (err) {
       console.log(err);
     }
@@ -86,8 +114,8 @@ export default function HomeScreen() {
     };
 
     if (
-      userInfo &&
-      userInfo.subscriptionPrice &&
+      userData &&
+      userData.subscriptionPrice &&
       props.disabled !== "disabled"
     ) {
       return (
@@ -97,13 +125,13 @@ export default function HomeScreen() {
       );
     }
 
-    if (userInfo) {
+    if (userData) {
       return (
         <Button type="submit" className={props.disabled}>
           Get Started
         </Button>
       );
-    } else if (!userInfo) {
+    } else if (!userData) {
       return <Button href="/signup">Get Started</Button>;
     }
   };
@@ -213,7 +241,7 @@ export default function HomeScreen() {
                           </ul>
                         </div>
                         <div className="d-flex justify-content-center">
-                          {userInfo.subscriptionPrice === option.price ? (
+                          {userData.subscriptionPrice === option.price ? (
                             <SubscriptionButton disabled="disabled" />
                           ) : (
                             <SubscriptionButton price={option.price} />
@@ -248,7 +276,7 @@ export default function HomeScreen() {
                           </ul>
                         </div>
                         <div className="d-flex justify-content-center">
-                          {userInfo.subscriptionPrice === option.price ? (
+                          {userData.subscriptionPrice === option.price ? (
                             <SubscriptionButton disabled="disabled" />
                           ) : (
                             <SubscriptionButton price={option.price} />

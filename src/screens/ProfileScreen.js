@@ -31,10 +31,15 @@ export default function ProfileScreen() {
   const [lastname, setLastname] = useState(userInfo.lastname);
   const [email, setEmail] = useState(userInfo.email);
   const [number, setNumber] = useState(userInfo.number);
+  const [address, setAddress] = useState(userInfo.address);
+  const [city, setCity] = useState(userInfo.city);
+  const [lstate, setLstate] = useState(userInfo.state);
+  const [zipcode, setZipcode] = useState(userInfo.zipcode);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [subscriptionPrice, setSubscriptionPrice] = useState("");
   const [subscriptionId, setSubscriptionId] = useState("");
+  const [stripeCustomerId, setStripeCustomerId] = useState("");
   const [subscribed, setSubscribed] = useState("");
   const [unpaidLink, setUnpaidLink] = useState("");
   const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
@@ -52,6 +57,7 @@ export default function ProfileScreen() {
         );
 
         if (result) {
+          setStripeCustomerId(result.data.stripeCustomerId)
           setSubscriptionPrice(result.data.subscriptionPrice);
           setSubscriptionId(result.data.subscriptionId);
           setSubscribed(result.data.subscribed);
@@ -66,9 +72,15 @@ export default function ProfileScreen() {
 
   const cancelSubscription = async () => {
     try {
-      const data = await axios.delete(`/v1/subscriptions/${subscriptionId}`);
+      const {data} = await axios.delete(`/v1/customers/${stripeCustomerId}`);
+
+    
       if (data) {
-        window.location.reload();
+        toast.success(data);
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+        
       }
     } catch (err) {
       console.log(err);
@@ -85,6 +97,10 @@ export default function ProfileScreen() {
           lastname,
           email,
           number,
+          address,
+          city,
+          lstate,
+          zipcode,
           password,
           confirmPassword,
         },
@@ -191,6 +207,47 @@ export default function ProfileScreen() {
               required
             />
           </Form.Group>
+
+          <Form.Group className="mb-3" controlId="address">
+            <Form.Label>Address</Form.Label>
+            <Form.Control
+              type="address"
+              value={address}
+              required
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="city">
+            <Form.Label>City</Form.Label>
+            <Form.Control
+              type="city"
+              value={city}
+              required
+              onChange={(e) => setCity(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="state">
+            <Form.Label>State</Form.Label>
+            <Form.Control
+              type="state"
+              value={lstate}
+              required
+              onChange={(e) => setLstate(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="zipcode">
+            <Form.Label>Zipcode</Form.Label>
+            <Form.Control
+              type="number"
+              value={zipcode}
+              required
+              onChange={(e) => setZipcode(e.target.value)}
+            />
+          </Form.Group>
+
           <Form.Group className="mb-3" controlId="password">
             <Form.Label>Password</Form.Label>
             <Form.Control
