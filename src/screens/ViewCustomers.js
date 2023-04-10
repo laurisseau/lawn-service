@@ -8,12 +8,10 @@ import { Store } from "../Store";
 import { useContext, useState, useEffect } from "react";
 
 export default function EmployeesScreen() {
-
   const { state } = useContext(Store);
   let { userInfo } = state;
-  const [users, setUsers] = useState('')
+  const [users, setUsers] = useState([]);
 
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,38 +27,8 @@ export default function EmployeesScreen() {
     fetchData();
   }, [userInfo]);
 
-  //console.log(users)
-/*
-
-  function AlertDismissible() {
-    return (
-      <>
-        <Alert show={alert[0]} variant="danger">
-          <Alert.Heading>
-            Are you sure you sant to delete this employee?
-          </Alert.Heading>
-
-          <Button
-            className="mt-3"
-            onClick={() => deleteEmployee(alert[1])}
-            variant="outline-danger"
-          >
-            Yes
-          </Button>
-          <Button
-            className="mt-3 ms-3"
-            onClick={() => setAlert([false, ""])}
-            variant="outline-danger"
-          >
-            No
-          </Button>
-        </Alert>
-      </>
-    );
-  }
-*/
   return (
-    <div>
+    <>
       <Navbar bg="dark" variant="dark">
         <Container>
           <NavBarComp />
@@ -80,17 +48,24 @@ export default function EmployeesScreen() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Devin Joseph</td>
-              <td>601 wood dr.<br/>
-                 kissimmee fl</td>
-              <td>+14075765595</td>
-              <td>devin@gmail.com</td>
-              <td>Paid</td>
-            </tr>
+            {users.map((user, userId) => (
+              <tr key={userId}>
+                <td>
+                  {user.firstname} {user.lastname}
+                </td>
+                <td>
+                  {user.address}
+                  <br />
+                  {user.city},{user.lstate}
+                </td>
+                <td>+1{user.number}</td>
+                <td>{user.email}</td>
+                <td>{user.subscribed ? "Paid" : "Not paid"}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Container>
-    </div>
+    </>
   );
 }
