@@ -4,8 +4,14 @@ import { Store } from "../Store";
 import { useContext } from "react";
 
 export default function NavBarComp() {
-  const { state } = useContext(Store);
+  const { state, dispatch: ctxDispatch} = useContext(Store);
   let { userInfo } = state;
+
+  const signoutHandler = () => {
+    ctxDispatch({ type: "USER_SIGNOUT" });
+    localStorage.removeItem("userInfo");
+    window.location.href = "/";
+  };
 
   const AdminCheck = () => {
     if (userInfo.isUser === "user") {
@@ -14,7 +20,7 @@ export default function NavBarComp() {
           <Nav.Link href="/">Home</Nav.Link>
           <NavDropdown title={userInfo.firstname} id="navbarScrollingDropdown">
             <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
-            <NavDropdown.Item href="#">Signout</NavDropdown.Item>
+            <NavDropdown.Item onClick={signoutHandler}>Signout</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       );
@@ -27,7 +33,7 @@ export default function NavBarComp() {
             <NavDropdown.Item href="viewCustomers">
               View Customers
             </NavDropdown.Item>
-            <NavDropdown.Item href="#">Signout</NavDropdown.Item>
+            <NavDropdown.Item onClick={signoutHandler}>Signout</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       );

@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -54,30 +55,26 @@ export default function HomeScreen() {
     },
   ];
 
-  const [userData, setUserData] = useState("")
+  const [userData, setUserData] = useState("");
   const { state } = useContext(Store);
   let { userInfo } = state;
 
   let userId = "";
-  let userToken = ""
+  let userToken = "";
 
   if (userInfo) {
     userId = userInfo._id;
-    userToken = userInfo.token
+    userToken = userInfo.token;
   } else {
     userInfo = "";
   }
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const {data} = await axios.get(
-          `/api/users/getUserById/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${userToken}` },
-          }
-        );
+        const { data } = await axios.get(`/api/users/getUserById/${userId}`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
         setUserData(data);
       } catch (err) {
         console.log(err);
@@ -87,8 +84,6 @@ export default function HomeScreen() {
       fetchData();
     }
   }, [userInfo, userId, userToken]);
-
-  //console.log()
 
   const userSubscriptionId = userData.subscriptionId;
 
@@ -100,17 +95,52 @@ export default function HomeScreen() {
       });
 
       if (data) {
-        window.location.reload();
+       window.location.reload();
       }
-
     } catch (err) {
       console.log(err);
     }
   };
 
   const SubscriptionButton = (props) => {
-    const onClickPickedPrice = () => {
-      changeSubscription(props.price);
+    const openModal = () => {
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-success",
+          cancelButton: " me-3 btn btn-danger",
+        },
+        buttonsStyling: false,
+      });
+
+      swalWithBootstrapButtons
+        .fire({
+          title: "Are you sure?",
+          text: "You want to change your subscription plan.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, change it!",
+          cancelButtonText: "No, cancel!",
+          reverseButtons: true,
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            swalWithBootstrapButtons.fire({
+              title:"Switched Subscription!",
+              text:"Your subscription has been changed!",
+              icon: "success"
+          })
+          changeSubscription(props.price);
+          } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+          ) {
+            swalWithBootstrapButtons.fire(
+              "Cancelled",
+              "Your subscription did not change.",
+              "error"
+            );
+          }
+        });
     };
 
     if (
@@ -119,7 +149,7 @@ export default function HomeScreen() {
       props.disabled !== "disabled"
     ) {
       return (
-        <Button onClick={onClickPickedPrice} className={props.disabled}>
+        <Button onClick={openModal} className={props.disabled}>
           Get Started
         </Button>
       );
