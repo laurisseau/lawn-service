@@ -6,18 +6,6 @@ import User from "../Models/userModel.js";
 export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
   const { priceId } = req.body;
 
-  console.log(req.get('host'))
-
-  console.log(
-    "/---------------------------------------------------------------------------------------------"
-  );
-  //console.log(`${req.protocol}://${req.get("x-forwarded-host")}/profile`);
-  console.log(req.get('origin'))
-  console.log(
-    "/---------------------------------------------------------------------------------------------"
-  );
-
-
   const session = await stripe(
     "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
   ).checkout.sessions.create({
@@ -32,8 +20,8 @@ export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
     // {CHECKOUT_SESSION_ID} is a string literal; do not change it!
     // the actual Session ID is returned in the query parameter when your customer
     // is redirected to the success page.
-    success_url: `${req.protocol}://${req.get("x-forwarded-host")}/profile`,
-    cancel_url: `${req.protocol}://${req.get("x-forwarded-host")}/`,
+    success_url: `${req.get('origin')}/profile`,
+    cancel_url: `${req.get('origin')}/`,
   });
 
   res.send(session);
@@ -163,6 +151,8 @@ export const checkPayment = async (req, res) => {
         }
       );
 
+      res.send('Checkout session completed')
+
       break;
     case "invoice.payment_failed":
       await User.updateOne(
@@ -172,6 +162,9 @@ export const checkPayment = async (req, res) => {
           unpaidLink: unpaidLink,
         }
       );
+
+      res.send('Invoice payment failed')
+
       break;
     case "invoice.payment_succeeded":
       await User.updateOne(
@@ -181,6 +174,8 @@ export const checkPayment = async (req, res) => {
           unpaidLink: "",
         }
       );
+
+      res.send('Invoice payment succeded')
       break;
     default:
     // Unhandled event type
