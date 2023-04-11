@@ -6,6 +6,16 @@ import User from "../Models/userModel.js";
 export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
   const { priceId } = req.body;
 
+  console.log(req.get("x-forwarded-host"))
+  console.log(
+    "/---------------------------------------------------------------------------------------------"
+  );
+  console.log(`${req.protocol}://${req.get("x-forwarded-host")}/profile`);
+  console.log(
+    "/---------------------------------------------------------------------------------------------"
+  );
+  
+
   const session = await stripe(
     "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
   ).checkout.sessions.create({
