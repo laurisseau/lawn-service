@@ -1,15 +1,15 @@
-import stripe from "stripe";
-import expressAsyncHandler from "express-async-handler";
-import { generateToken } from "../utils.js";
-import User from "../Models/userModel.js";
+import stripe from 'stripe';
+import expressAsyncHandler from 'express-async-handler';
+import { generateToken } from '../utils.js';
+import User from '../Models/userModel.js';
 
 export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
   const { priceId } = req.body;
 
   const session = await stripe(
-    "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+    'sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd'
   ).checkout.sessions.create({
-    mode: "subscription",
+    mode: 'subscription',
     line_items: [
       {
         price: priceId,
@@ -20,8 +20,8 @@ export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
     // {CHECKOUT_SESSION_ID} is a string literal; do not change it!
     // the actual Session ID is returned in the query parameter when your customer
     // is redirected to the success page.
-    success_url: "http://localhost:3000/profile",
-    cancel_url: "http://localhost:3000/",
+    success_url: `${req.protocol}://${req.get('x-forwarded-host')}/profile`,
+    cancel_url: `${req.protocol}://${req.get('x-forwarded-host')}/`,
   });
 
   res.send(session);
@@ -30,7 +30,7 @@ export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
 export const cancelSubscription = async (req, res) => {
   try {
     const deleted = await stripe(
-      "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+      'sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd'
     ).customers.del(req.params.id);
 
     const stripeCustomerId = deleted.id;
@@ -39,11 +39,10 @@ export const cancelSubscription = async (req, res) => {
       { stripeCustomerId: stripeCustomerId },
       {
         subscribed: false,
-        subscriptionPrice: "",
-        subscriptionId: "",
-        sessionId: "",
-        stripeCustomerId: ""
-
+        subscriptionPrice: '',
+        subscriptionId: '',
+        sessionId: '',
+        stripeCustomerId: '',
       }
     );
 
@@ -59,14 +58,14 @@ export const changeSubscription = async (req, res) => {
     const subscriptionId = req.body.userSubscriptionId;
 
     const subscription = await stripe(
-      "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+      'sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd'
     ).subscriptions.retrieve(subscriptionId);
 
     const changed = await stripe(
-      "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+      'sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd'
     ).subscriptions.update(subscription.id, {
       cancel_at_period_end: false,
-      proration_behavior: "create_prorations",
+      proration_behavior: 'create_prorations',
       items: [
         {
           id: subscription.items.data[0].id,
@@ -108,7 +107,7 @@ export const updateSessionId = async (req, res) => {
       sessionId: req.body.sessionId,
     });
 
-    res.send("updated successful");
+    res.send('updated successful');
   } catch (err) {
     console.log(err);
   }
@@ -116,14 +115,13 @@ export const updateSessionId = async (req, res) => {
 
 export const checkPayment = async (req, res) => {
   let event;
-  const signature = req.headers["stripe-signature"];
-  const webhookSecret =
-    "whsec_14eb84dbb003a31053278e85f94ab6497b80c873f243c493ff6cd641720c7efb";
+  const signature = req.headers['stripe-signature'];
+  const webhookSecret = 'whsec_8Q0frf7eiCFqVrcXv1JZHaWbYNqe1UTp';
 
   const payload = req.body;
   try {
     event = stripe(
-      "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+      'sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd'
     ).webhooks.constructEvent(payload, signature, webhookSecret);
   } catch (err) {
     console.log(err);
@@ -136,9 +134,9 @@ export const checkPayment = async (req, res) => {
   const unpaidLink = event.data.object.hosted_invoice_url;
 
   switch (eventType) {
-    case "checkout.session.completed":
+    case 'checkout.session.completed':
       const subscription = await stripe(
-        "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+        'sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd'
       ).subscriptions.retrieve(subscriptionId);
 
       const subscriptionPrice = subscription.plan.id;
@@ -154,7 +152,7 @@ export const checkPayment = async (req, res) => {
       );
 
       break;
-    case "invoice.payment_failed":
+    case 'invoice.payment_failed':
       await User.updateOne(
         { stripeCustomerId: stripeCustomerId },
         {
@@ -163,12 +161,12 @@ export const checkPayment = async (req, res) => {
         }
       );
       break;
-    case "invoice.payment_succeeded":
+    case 'invoice.payment_succeeded':
       await User.updateOne(
         { stripeCustomerId: stripeCustomerId },
         {
           subscribed: true,
-          unpaidLink: "",
+          unpaidLink: '',
         }
       );
       break;
