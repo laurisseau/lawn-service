@@ -95,7 +95,7 @@ export default function HomeScreen() {
       });
 
       if (data) {
-       window.location.reload();
+        window.location.reload();
       }
     } catch (err) {
       console.log(err);
@@ -125,11 +125,11 @@ export default function HomeScreen() {
         .then((result) => {
           if (result.isConfirmed) {
             swalWithBootstrapButtons.fire({
-              title:"Switched Subscription!",
-              text:"Your subscription has been changed!",
-              icon: "success"
-          })
-          changeSubscription(props.price);
+              title: "Switched Subscription!",
+              text: "Your subscription has been changed!",
+              icon: "success",
+            });
+            changeSubscription(props.price);
           } else if (
             /* Read more about handling dismissals below */
             result.dismiss === Swal.DismissReason.cancel
@@ -239,21 +239,31 @@ export default function HomeScreen() {
         <h1>Choose Your Right Plan</h1>
         <p>Upgrade to Premium & Get more Services!</p>
       </div>
-      <Container
-        className="mt-5 d-flex justify-content-center"
-        style={{ marginBottom: "100px" }}
-      >
-        <Row>
+      <Container className="mt-5" style={{ marginBottom: "100px" }}>
+        <Row className="justify-content-center" fluid>
           {optionObject.map((option, optionId) => (
             <Col
               key={optionId}
-              className={`order-${option.order} align-self-center`}
+              className={`order-${option.order} align-self-center m-3`}
+              xs={9}
+              sm={8}
+              md={6}
+              lg={4}
+              xl={3}
+              fluid
             >
               {option.main ? (
-                <div className="order-2">
+                <div className="">
                   <form onSubmit={handleSubmit}>
                     <input type="hidden" name="priceId" value={option.price} />
-                    <Card className="shadow" style={{ width: "18rem" }}>
+                    <Card
+                      className="shadow"
+                      style={{
+                        width: "100%",
+                        marginTop: "30px",
+                        height: "fit-content",
+                      }}
+                    >
                       <Card.Body>
                         <div className="d-flex justify-content-between border-bottom">
                           <div className="mb-3 mt-3">
@@ -287,7 +297,11 @@ export default function HomeScreen() {
                     <input type="hidden" name="priceId" value={option.price} />
                     <Card
                       className="shadow"
-                      style={{ width: "18rem", height: "330px" }}
+                      style={{
+                        width: "100%",
+                        height: "fit-content",
+                        marginTop: "30px",
+                      }}
                     >
                       <Card.Body>
                         <div className="d-flex justify-content-between border-bottom ">
