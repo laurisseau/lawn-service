@@ -6,11 +6,13 @@ import User from "../Models/userModel.js";
 export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
   const { priceId } = req.body;
 
-  console.log(req)
+  console.log(req.get('host'))
+
   console.log(
     "/---------------------------------------------------------------------------------------------"
   );
   //console.log(`${req.protocol}://${req.get("x-forwarded-host")}/profile`);
+  console.log(req.get('origin'))
   console.log(
     "/---------------------------------------------------------------------------------------------"
   );
