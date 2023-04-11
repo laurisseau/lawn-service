@@ -1,0 +1,20 @@
+{
+  "name": "lawn-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build" : "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "start": "node backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laurisseau/lawn-service.git"
+  },
+  "author": "laurisseau joseph",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/laurisseau/lawn-service/issues"
+  },
+  "homepage": "https://github.com/laurisseau/lawn-service#readme"
+}
