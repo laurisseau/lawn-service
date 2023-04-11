@@ -20,7 +20,7 @@ export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
     // {CHECKOUT_SESSION_ID} is a string literal; do not change it!
     // the actual Session ID is returned in the query parameter when your customer
     // is redirected to the success page.
-    success_url: "http://localhost:3000/profile",
+    success_url: `${req.protocol}://${req.get("x-forwarded-host")}/profile`,
     cancel_url: "http://localhost:3000/",
   });
 
@@ -42,12 +42,11 @@ export const cancelSubscription = async (req, res) => {
         subscriptionPrice: "",
         subscriptionId: "",
         sessionId: "",
-        stripeCustomerId: ""
-
+        stripeCustomerId: "",
       }
     );
 
-    res.send('subscription deleted successfully');
+    res.send("subscription deleted successfully");
   } catch (err) {
     console.log(err);
   }
