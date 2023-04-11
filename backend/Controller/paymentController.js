@@ -21,7 +21,7 @@ export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
     // the actual Session ID is returned in the query parameter when your customer
     // is redirected to the success page.
     success_url: `${req.protocol}://${req.get("x-forwarded-host")}/profile`,
-    cancel_url: "http://localhost:3000/",
+    cancel_url: `${req.protocol}://${req.get("x-forwarded-host")}/`,
   });
 
   res.send(session);
