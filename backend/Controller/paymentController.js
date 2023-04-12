@@ -2,12 +2,14 @@ import stripe from "stripe";
 import expressAsyncHandler from "express-async-handler";
 import { generateToken } from "../utils.js";
 import User from "../Models/userModel.js";
+import dotenv from "dotenv";
+dotenv.config({ path: "config.env" });
 
 export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
   const { priceId } = req.body;
 
   const session = await stripe(
-    "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+    process.env.STRIPE_SK_TEST
   ).checkout.sessions.create({
     mode: "subscription",
     line_items: [
@@ -20,18 +22,19 @@ export const subscriptionPayment = expressAsyncHandler(async (req, res) => {
     // {CHECKOUT_SESSION_ID} is a string literal; do not change it!
     // the actual Session ID is returned in the query parameter when your customer
     // is redirected to the success page.
-    success_url: `${req.get('origin')}/profile`,
-    cancel_url: `${req.get('origin')}/`,
+    success_url: `${req.get("origin")}profile`,
+    cancel_url: `${req.get("origin")}/`,
   });
 
   res.send(session);
 });
 
+
 export const cancelSubscription = async (req, res) => {
   try {
-    const deleted = await stripe(
-      "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
-    ).customers.del(req.params.id);
+    const deleted = await stripe(process.env.STRIPE_SK_TEST).customers.del(
+      req.params.id
+    );
 
     const stripeCustomerId = deleted.id;
 
@@ -58,11 +61,11 @@ export const changeSubscription = async (req, res) => {
     const subscriptionId = req.body.userSubscriptionId;
 
     const subscription = await stripe(
-      "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+      process.env.STRIPE_SK_TEST
     ).subscriptions.retrieve(subscriptionId);
 
     const changed = await stripe(
-      "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+      process.env.STRIPE_SK_TEST
     ).subscriptions.update(subscription.id, {
       cancel_at_period_end: false,
       proration_behavior: "create_prorations",
@@ -116,13 +119,15 @@ export const updateSessionId = async (req, res) => {
 export const checkPayment = async (req, res) => {
   let event;
   const signature = req.headers["stripe-signature"];
-  const webhookSecret = "whsec_8Q0frf7eiCFqVrcXv1JZHaWbYNqe1UTp";
-
+  const webhookSecret = process.env.LIVE_WEBHOOK;
   const payload = req.body;
+
   try {
-    event = stripe(
-      "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
-    ).webhooks.constructEvent(payload, signature, webhookSecret);
+    event = stripe(process.env.STRIPE_SK_TEST).webhooks.constructEvent(
+      payload,
+      signature,
+      webhookSecret
+    );
   } catch (err) {
     console.log(err);
   }
@@ -136,7 +141,7 @@ export const checkPayment = async (req, res) => {
   switch (eventType) {
     case "checkout.session.completed":
       const subscription = await stripe(
-        "sk_test_51Mp2ZIK7StTt0Prs2Jdz5cw5AXDVXdF2b4SWt1JMVXuvzAyWTIR02xIFuYjvZI7KOXi4K9cO8mn270twMEcrwY1L00whAcYOkd"
+        process.env.STRIPE_SK_TEST
       ).subscriptions.retrieve(subscriptionId);
 
       const subscriptionPrice = subscription.plan.id;
@@ -151,7 +156,7 @@ export const checkPayment = async (req, res) => {
         }
       );
 
-      res.send('Checkout session completed')
+      res.send("Checkout session completed");
 
       break;
     case "invoice.payment_failed":
@@ -163,7 +168,7 @@ export const checkPayment = async (req, res) => {
         }
       );
 
-      res.send('Invoice payment failed')
+      res.send("Invoice payment failed");
 
       break;
     case "invoice.payment_succeeded":
@@ -175,7 +180,7 @@ export const checkPayment = async (req, res) => {
         }
       );
 
-      res.send('Invoice payment succeded')
+      res.send("Invoice payment succeded");
       break;
     default:
     // Unhandled event type
