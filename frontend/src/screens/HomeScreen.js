@@ -16,13 +16,11 @@ export default function HomeScreen() {
     {
       price: "price_1MvspSEbHlKipqTm51fYeX7T",
       priceAmount: "$200",
-      packageName: "Starter",
+      packageName: "Premium",
       optionList: [
-        "daily",
-        "Lorem Ipsum is dummy text",
-        "Lorem Ipsum is dummy text",
-        "Lorem Ipsum is dummy text",
-        "Lorem Ipsum is dummy text",
+        "All services from the Basic and Starter Packages.",
+        "Spreading of high-quality grass seeds to fill in bare patches and promote a lush lawn.",
+        "Installation of vibrant seasonal flowers to add color and appeal to your landscape.",
       ],
       main: true,
       order: 2,
@@ -32,10 +30,9 @@ export default function HomeScreen() {
       priceAmount: "$100",
       packageName: "Basic",
       optionList: [
-        "biweekly",
-        "Lorem Ipsum is dummy text",
-        "Lorem Ipsum is dummy text",
-        "Lorem Ipsum is dummy text",
+        "Weekly Lawn Mowing: Regular mowing to maintain a well-groomed lawn.",
+        "Edging and Trimming: Precise edging and trimming along walkways, flowerbeds, and obstacles.",
+        "Removal of grass clippings and debris after each mowing session.",
       ],
       main: false,
       order: 1,
@@ -43,12 +40,12 @@ export default function HomeScreen() {
     {
       price: "price_1MvsqBEbHlKipqTmfWF0gQ8N",
       priceAmount: "$300",
-      packageName: "Advanced",
+      packageName: "Starter",
       optionList: [
-        "monthly",
-        "Lorem Ipsum is dummy text",
-        "Lorem Ipsum is dummy text",
-        "Lorem Ipsum is dummy text",
+        "All services from the Basic Package.",
+        "Seasonal fertilization to nourish your lawn and weed control to keep unwanted plants at bay.",
+        "Hedge Trimming: Shaping and pruning of hedges and bushes.",
+        "Application of fresh mulch to retain moisture and protect plant beds."
       ],
       main: false,
       order: 3,
@@ -225,13 +222,7 @@ export default function HomeScreen() {
         <div className="strip"></div>
         <div className="header-box">
           <h1> Tony Lawn Care Services</h1>
-          <button className="header-button">Call Us Now</button>
-          <button
-            className="header-button"
-            style={{ backgroundColor: "white" }}
-          >
-            Contact Us
-          </button>
+
         </div>
       </header>
 
@@ -274,7 +265,7 @@ export default function HomeScreen() {
                           </div>
                         </div>
                         <div>
-                          <ul className="mt-3" style={{ lineHeight: "250%" }}>
+                          <ul className="mt-3" >
                             {option.optionList.map((word, id) => (
                               <li key={id}>{word}</li>
                             ))}
@@ -313,7 +304,7 @@ export default function HomeScreen() {
                           </div>
                         </div>
                         <div>
-                          <ul className="mt-3" style={{ lineHeight: "250%" }}>
+                          <ul className="mt-3" >
                             {option.optionList.map((word, id) => (
                               <li key={id}>{word}</li>
                             ))}
@@ -367,3 +358,15 @@ export default function HomeScreen() {
     </div>
   );
 }
+
+/*
+
+          <button className="header-button">Call Us Now</button>
+          <button
+            className="header-button"
+            style={{ backgroundColor: "white" }}
+          >
+            Contact Us
+          </button>
+          
+*/
