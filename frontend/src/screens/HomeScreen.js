@@ -15,7 +15,7 @@ export default function HomeScreen() {
   const optionObject = [
     {
       price: "price_1MvspSEbHlKipqTm51fYeX7T",
-      priceAmount: "$200",
+      priceAmount: "$300",
       packageName: "Premium",
       optionList: [
         "All services from the Basic and Starter Packages.",
@@ -39,7 +39,7 @@ export default function HomeScreen() {
     },
     {
       price: "price_1MvsqBEbHlKipqTmfWF0gQ8N",
-      priceAmount: "$300",
+      priceAmount: "$200",
       packageName: "Starter",
       optionList: [
         "All services from the Basic Package.",
